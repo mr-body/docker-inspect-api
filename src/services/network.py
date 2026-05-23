@@ -25,21 +25,24 @@ class NetworkService(Command):
 
         return networks
 
-    def inspect_network(self, id: str):
-        command = ["docker", "network", "inspect", id, "--format", "{{json .}}"]
+    def inspect_network(self, network_id: str):
+        command = ["docker", "network", "inspect", network_id]
         output = self.command_execute(command)
 
         try:
             data = json.loads(output)
+
+            if isinstance(data, list):
+                data = data[0] if data else {}
 
             return {
                 "id": data.get("Id"),
                 "name": data.get("Name"),
                 "driver": data.get("Driver"),
                 "scope": data.get("Scope"),
-                "containers": data.get("Containers"),
-                "options": data.get("Options"),
-                "ipam": data.get("IPAM"),
+                "containers": data.get("Containers", {}),
+                "options": data.get("Options", {}),
+                "ipam": data.get("IPAM", {}),
             }
 
         except json.JSONDecodeError:

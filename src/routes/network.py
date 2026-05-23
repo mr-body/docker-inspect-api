@@ -1,17 +1,24 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from src.services.network import NetworkService
 
-router = APIRouter(
-    prefix="/network",
-    tags=["docker"]
-)
+router = APIRouter(prefix="/network", tags=["docker"])
 
 network_service = NetworkService()
 
 @router.get("/")
 def get_networks():
-    return network_service.get_networks()
+    result = network_service.get_networks()
 
-@router.get("/{id}")
-def get_network(id: str):
-    return network_service.inspect_network(id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Network not found")
+
+    return result
+
+@router.get("/{network_id}")
+def get_network(network_id: str):
+    result = network_service.inspect_network(network_id)
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Network not found")
+
+    return result
