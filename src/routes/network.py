@@ -1,7 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from src.services.network import NetworkService
 
-router = APIRouter(prefix="/network", tags=["docker"])
+router = APIRouter(
+    prefix="/network",
+     tags=["docker"]
+)
 
 network_service = NetworkService()
 

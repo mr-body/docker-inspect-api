@@ -10,8 +10,11 @@ volume_service = VolumeService()
 
 @router.get("/")
 def get_volumes():
-    return volume_service.get_process()
+    return volume_service.get_volumes()
 
 @router.get("/{name}")
 def get_volume(name: str):
     return volume_service.inspect_volume(name)
+@router.get("/{name}/files")
+def list_volume_files(name: str):
+    return volume_service.list_volume_files(name)
