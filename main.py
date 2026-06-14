@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from src.routes import image, network, process, volume, log, command
+from src.routes import image, network, process, volume, log, command, terminal
 
 app = FastAPI()
 
@@ -21,6 +21,7 @@ app.include_router(process.router)
 app.include_router(volume.router)
 app.include_router(log.router)
 app.include_router(command.router)
+app.include_router(terminal.router)
 
 # frontend separado
 app.mount("/ui", StaticFiles(directory="public", html=True), name="public")
