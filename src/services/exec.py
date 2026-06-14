@@ -9,9 +9,9 @@ class ExecService:
     def exec_command(self, payload: ExecRequest):
         try:
             full_command = [
-                "exec", "-i",
+                "docker", "exec", "-i",
                 payload.container,
-                "bash", "-c",
+                "sh", "-c",
                 payload.command
             ]
 

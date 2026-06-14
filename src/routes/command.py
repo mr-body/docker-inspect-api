@@ -6,13 +6,13 @@ router = APIRouter(
     tags=["docker"]
 )
 
-exec_service = ExecService()
+command = ExecService()
 
 
 @router.post("/")
 def execute(payload: ExecRequest):
     try:
-        result = exec_service.exec_command(payload)
+        result = command.exec_command(payload)
 
         return result
 

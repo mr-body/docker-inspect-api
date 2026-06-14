@@ -4,7 +4,7 @@ from src.util.command import Command
 
 class ProcessService(Command):
     def get_process(self):
-        command = ["ps", "--format", "{{json .}}"]
+        command = ["docker", "ps", "--format", "{{json .}}"]
         output = self.command_execute(command)
 
         if isinstance(output, bytes):

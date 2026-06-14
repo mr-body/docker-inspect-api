@@ -4,7 +4,7 @@ from src.util.command import Command
 
 class NetworkService(Command):
     def get_networks(self):
-        command = ["network", "ls", "--format", "{{json .}}"]
+        command = ["docker", "network", "ls", "--format", "{{json .}}"]
         output = self.command_execute(command)
 
         if isinstance(output, bytes):
@@ -29,7 +29,7 @@ class NetworkService(Command):
         return networks
 
     def inspect_network(self, network_id: str):
-        command = ["network", "inspect", network_id]
+        command = ["docker", "network", "inspect", network_id]
         output = self.command_execute(command)
 
         try:

@@ -4,7 +4,7 @@ from src.util.command import Command
 
 class ImageService(Command):
     def get_images(self):
-        command = ["images", "--format", "{{json .}}"]
+        command = ["docker", "images", "--format", "{{json .}}"]
         output = self.command_execute(command)
 
         if isinstance(output, bytes):

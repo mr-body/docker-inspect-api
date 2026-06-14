@@ -6,7 +6,7 @@ from src.util.command import Command
 
 class VolumeService(Command):
     def get_volumes(self):
-        command = ["volume", "ls", "--format", "{{json .}}"]
+        command = ["docker", "volume", "ls", "--format", "{{json .}}"]
         output = self.command_execute(command)
 
         if isinstance(output, bytes):
@@ -29,7 +29,7 @@ class VolumeService(Command):
         return volumes
     
     def inspect_volume(self, name: str):
-        command = ["volume", "inspect", name]
+        command = ["docker", "volume", "inspect", name]
         output = self.command_execute(command)
 
         try:
@@ -48,7 +48,7 @@ class VolumeService(Command):
             return {"error": "Invalid volume data"}
 
     def list_volume_files(self, name: str):
-        command = ["volume", "inspect", name]
+        command = ["docker", "volume", "inspect", name]
         output = self.command_execute(command)
 
         try:

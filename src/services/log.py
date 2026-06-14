@@ -5,7 +5,7 @@ from src.util.command import Command
 class LogsService(Command):
 
     def get_logs(self, identifier: str, tail: int = 100):
-        command = ["logs", "--tail", str(tail), identifier]
+        command = ["docker", "logs", "--tail", str(tail), identifier]
         output = self.command_execute(command)
 
         if isinstance(output, bytes):
