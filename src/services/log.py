@@ -11,16 +11,11 @@ class LogsService(Command):
         if isinstance(output, bytes):
             output = output.decode("utf-8")
 
-        # Apenas retorna logs como texto limpo
         return output.splitlines()
 
-
     def stream_logs(self, identifier: str):
-        """
-        Streaming real com docker logs -f
-        """
         process = subprocess.Popen(
-            ["logs", "-f", identifier],
+            ["docker", "logs", "-f", identifier],  # FIX 1
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
