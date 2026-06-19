@@ -6,8 +6,8 @@ router = APIRouter(
     tags=["docker"]
 )
 
-imaage_service = ImageService()
+image_service = ImageService()
 
 @router.get("/")
 def get_images():
-    return imaage_service.get_images()
+    return image_service.get_images()

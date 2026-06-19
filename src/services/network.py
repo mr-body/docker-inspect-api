@@ -7,6 +7,9 @@ class NetworkService(Command):
         command = ["docker", "network", "ls", "--format", "{{json .}}"]
         output = self.command_execute(command)
 
+        if isinstance(output, bytes):
+            output = output.decode("utf-8")
+
         networks = []
 
         for line in output.strip().split("\n"):

@@ -6,6 +6,9 @@ class ImageService(Command):
         command = ["docker", "images", "--format", "{{json .}}"]
         output = self.command_execute(command)
 
+        if isinstance(output, bytes):
+            output = output.decode("utf-8")
+            
         images = []
 
         for line in output.strip().split("\n"):

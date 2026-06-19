@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <title>Docker Logs Stream</title>
+
+  <style>
+    body {
+      background: #0d1117;
+      color: #00ff88;
+      font-family: monospace;
+      padding: 20px;
+    }
+
+    h1 {
+      color: white;
+    }
+
+    input {
+      padding: 10px;
+      width: 250px;
+      margin-right: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      padding: 10px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+
+    #logs {
+      margin-top: 15px;
+      white-space: pre-wrap;
+      background: #161b22;
+      padding: 15px;
+      border-radius: 8px;
+      height: 75vh;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Docker Logs Live Stream</h1>
+
+<input id="identifier" placeholder="Ex: wordpress-app" />
+
+<button onclick="startStream()">Start</button>
+<button onclick="stopStream()">Stop</button>
+
+<div id="logs"></div>
+
+<script>
+let controller = null;
+
+function startStream() {
+  const id = document.getElementById("identifier").value;
+  const logsDiv = document.getElementById("logs");
+
+  if (!id) {
+    alert("Digite o identifier do container");
+    return;
+  }
+
+  logsDiv.innerHTML = "";
+
+  if (controller) {
+    controller.abort();
+  }
+
+  controller = new AbortController();
+
+  fetch(`/log/stream?identifier=${id}`, {
+    signal: controller.signal
+  })
+  .then(response => {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    function read() {
+      reader.read().then(({ done, value }) => {
+        if (done) return;
+
+        const chunk = decoder.decode(value);
+        logsDiv.innerHTML += chunk;
+        logsDiv.scrollTop = logsDiv.scrollHeight;
+
+        read();
+      });
+    }
+
+    read();
+  })
+  .catch(err => {
+    console.log("Stream encerrado:", err);
+  });
+}
+
+function stopStream() {
+  if (controller) {
+    controller.abort();
+  }
+}
+</script>
+
+</body>
+</html>

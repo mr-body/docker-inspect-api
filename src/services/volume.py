@@ -1,4 +1,6 @@
 import json
+import os
+from pathlib import Path
 from src.util.command import Command
 
 
@@ -7,6 +9,9 @@ class VolumeService(Command):
         command = ["docker", "volume", "ls", "--format", "{{json .}}"]
         output = self.command_execute(command)
 
+        if isinstance(output, bytes):
+            output = output.decode("utf-8")
+            
         volumes = []
 
         for line in output.strip().split("\n"):
@@ -41,3 +46,35 @@ class VolumeService(Command):
 
         except (json.JSONDecodeError, IndexError):
             return {"error": "Invalid volume data"}
+
+    def list_volume_files(self, name: str):
+        command = ["docker", "volume", "inspect", name]
+        output = self.command_execute(command)
+
+        try:
+            data = json.loads(output)[0]
+            mountpoint = data.get("Mountpoint")
+
+            if not mountpoint or not os.path.exists(mountpoint):
+                return {
+                    "error": "Mountpoint not found",
+                    "mountpoint": mountpoint
+                }
+
+            files = []
+
+            for item in Path(mountpoint).iterdir():
+                files.append({
+                    "name": item.name,
+                    "type": "dir" if item.is_dir() else "file",
+                    "path": str(item)
+                })
+
+            return {
+                "volume": name,
+                "mountpoint": mountpoint,
+                "files": files
+            }
+
+        except Exception as e:
+            return {"error": str(e)}

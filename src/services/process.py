@@ -7,9 +7,13 @@ class ProcessService(Command):
         command = ["docker", "ps", "--format", "{{json .}}"]
         output = self.command_execute(command)
 
+        if isinstance(output, bytes):
+            output = output.decode("utf-8")
+
         processes = []
 
-        for line in output.strip().split("\n"):
+        for line in output.splitlines():
+            line = line.strip()
             if not line:
                 continue
             try:
@@ -23,5 +27,7 @@ class ProcessService(Command):
                     "ports": item.get("Ports"),
                     "name": item.get("Names")
                 })
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
+                print("JSON inválido:", line, e)
                 continue
+        return processes

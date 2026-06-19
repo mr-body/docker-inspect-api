@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Docker Terminal</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
+
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      height: 100vh;
+    }
+
+    #terminal {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="terminal"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
+
+  <script>
+    const term = new Terminal({
+      cursorBlink: true,
+      fontSize: 14,
+    });
+
+    term.open(document.getElementById("terminal"));
+
+    // 🔥 muda aqui o container e shell
+    const container = "trace-api";
+    const shell = "sh";
+
+    const ws = new WebSocket(
+      `ws://212.85.1.223:8000/terminal/container?container=${container}&shell=${shell}`
+    );
+
+    ws.onopen = () => {
+      term.write("\r\n🟢 Conectado ao container\r\n");
+    };
+
+    ws.onmessage = (event) => {
+      term.write(event.data);
+    };
+
+    ws.onclose = () => {
+      term.write("\r\n🔴 Conexão fechada\r\n");
+    };
+
+    term.onData((data) => {
+      ws.send(data);
+    });
+  </script>
+</body>
+</html>
