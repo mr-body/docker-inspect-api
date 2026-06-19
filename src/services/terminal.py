@@ -1,17 +1,19 @@
 import asyncio
 import fcntl
 import os
+import pwd
 import pty
 import subprocess
 from contextlib import asynccontextmanager
-
 from fastapi import WebSocket, WebSocketDisconnect
 
 
 @asynccontextmanager
-async def _pty_process(argv: list[str]):
-    """Open a PTY pair, spawn *argv*, yield (master_fd, proc), then clean up."""
+async def _pty_process(argv: list[str], preexec_fn=None, cwd=None):
     master_fd, slave_fd = pty.openpty()
+
+    env = os.environ.copy()
+
     try:
         proc = subprocess.Popen(
             argv,
@@ -19,12 +21,13 @@ async def _pty_process(argv: list[str]):
             stdout=slave_fd,
             stderr=slave_fd,
             close_fds=True,
+            preexec_fn=preexec_fn,
+            cwd=cwd,
+            env=env  
         )
     finally:
-        # Close slave end in parent — the child holds its own copy.
         os.close(slave_fd)
 
-    # Make reads non-blocking so the async reader can yield to the event loop.
     flags = fcntl.fcntl(master_fd, fcntl.F_GETFL)
     fcntl.fcntl(master_fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
 
@@ -34,12 +37,9 @@ async def _pty_process(argv: list[str]):
         try:
             proc.kill()
             proc.wait(timeout=2)
-        except (ProcessLookupError, subprocess.TimeoutExpired):
+        except Exception:
             pass
-        try:
-            os.close(master_fd)
-        except OSError:
-            pass
+        os.close(master_fd)
 
 
 async def _pty_reader(master_fd: int, ws: WebSocket, stop: asyncio.Event) -> None:
@@ -58,6 +58,13 @@ async def _pty_reader(master_fd: int, ws: WebSocket, stop: asyncio.Event) -> Non
     finally:
         stop.set()
 
+def demote_user(username: str):
+    """Run process as a different Linux user."""
+    def result():
+        user = pwd.getpwnam(username)
+        os.setgid(user.pw_gid)
+        os.setuid(user.pw_uid)
+    return result
 
 async def handle_terminal(ws: WebSocket, container: str, shell: str = "bash") -> None:
     """Proxy a WebSocket to a shell running inside *container* via docker exec."""
@@ -90,7 +97,9 @@ async def handle_host_terminal(ws: WebSocket) -> None:
     """Proxy a WebSocket to a local bash session on the host."""
     stop = asyncio.Event()
 
-    async with _pty_process(["bash"]) as (master_fd, proc):
+    user = pwd.getpwnam("docker-inspect")
+
+    async with _pty_process(["bash"], preexec_fn=demote_user("docker-inspect"), cwd=user.pw_dir) as (master_fd, proc):
         reader = asyncio.create_task(_pty_reader(master_fd, ws, stop))
         try:
             while not stop.is_set():
