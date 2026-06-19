@@ -24,7 +24,7 @@ class VolumeService(Command):
         return volumes
     
     def inspect_volume(self, name: str):
-        command = ["docker", "volume", "inspect", name]
+        command = ["docker", "volume", "inspect", name, "--format", "{{json .}}"]
         output = self.command_execute(command)
 
         try:

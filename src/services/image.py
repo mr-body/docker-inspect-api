@@ -1,7 +1,6 @@
 import json
 from src.util.command import Command
 
-
 class ImageService(Command):
     def get_images(self):
         command = ["docker", "images", "--format", "{{json .}}"]
