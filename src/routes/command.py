@@ -3,7 +3,7 @@ from src.services.exec import ExecService, ExecRequest
 
 router = APIRouter(
     prefix="/command",
-    tags=["docker"]
+    tags=["Process"]
 )
 
 command = ExecService()

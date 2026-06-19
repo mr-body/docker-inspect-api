@@ -3,7 +3,7 @@ from src.services.process import ProcessService
 
 router = APIRouter(
     prefix="/process",
-    tags=["docker"]
+    tags=["Process"]
 )
 
 process_service = ProcessService()

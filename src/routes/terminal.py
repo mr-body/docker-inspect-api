@@ -1,7 +1,7 @@
 from fastapi import APIRouter, WebSocket
-from src.services.terminal import handle_terminal
+from src.services.terminal import handle_terminal, handle_host_terminal
 
-router = APIRouter(prefix="/terminal", tags=["docker"])
+router = APIRouter(prefix="/terminal", tags=["Terminal"])
 
 
 @router.websocket("/container")
@@ -17,3 +17,8 @@ async def terminal_container(ws: WebSocket):
         container=container,
         shell=shell,
     )
+
+@router.websocket("/local")
+async def host_terminal(ws: WebSocket):
+    await ws.accept()
+    await handle_host_terminal(ws)

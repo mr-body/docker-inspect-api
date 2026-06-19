@@ -4,7 +4,7 @@ from src.util.auth import create_access_token
 
 router = APIRouter(
     prefix="/auth",
-    tags=["auth"]
+    tags=["Auth"]
 )
 
 class LoginRequest(BaseModel):

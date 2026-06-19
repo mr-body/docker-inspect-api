@@ -3,7 +3,7 @@ from src.services.volume import VolumeService
 
 router = APIRouter(
     prefix="/volume",
-    tags=["docker"]
+    tags=["Volume"]
 )
 
 volume_service = VolumeService()

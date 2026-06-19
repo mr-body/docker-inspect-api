@@ -3,7 +3,7 @@ from src.services.image import ImageService
 
 router = APIRouter(
     prefix="/image",
-    tags=["docker"]
+    tags=["Image"]
 )
 
 image_service = ImageService()

@@ -3,7 +3,7 @@ from src.services.network import NetworkService
 
 router = APIRouter(
     prefix="/network",
-     tags=["docker"]
+     tags=["Network"]
 )
 
 network_service = NetworkService()

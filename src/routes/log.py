@@ -5,7 +5,7 @@ from src.services.log import LogsService
 
 router = APIRouter(
     prefix="/log",
-    tags=["docker"]
+    tags=["Process"]
 )
 
 logs_service = LogsService()
