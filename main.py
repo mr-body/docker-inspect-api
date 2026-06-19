@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from src.routes import image, network, process, volume, log, command, terminal
+from src.routes import image, network, process, volume, log, command, terminal, auth
+from src.middleware.auth import auth_middleware
 
 app = FastAPI()
 
@@ -14,6 +15,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.middleware("http")(auth_middleware)
+
 # routers
 app.include_router(image.router)
 app.include_router(network.router)
@@ -22,6 +25,7 @@ app.include_router(volume.router)
 app.include_router(log.router)
 app.include_router(command.router)
 app.include_router(terminal.router)
+app.include_router(auth.router)
 
 # frontend separado
 app.mount("/ui", StaticFiles(directory="public", html=True), name="public")

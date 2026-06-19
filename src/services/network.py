@@ -50,3 +50,18 @@ class NetworkService(Command):
 
         except json.JSONDecodeError:
             return {"error": "Invalid JSON from docker"}
+
+    def remove_network(self, network_id: str):
+        command = ["docker", "network", "rm", network_id]
+        output = self.command_execute(command)
+        return {"status": "success"}
+
+    def connect_network(self, network_id: str, container: str):
+        command = ["docker", "network", "connect", network_id, container]
+        output = self.command_execute(command)
+        return {"status": "success"}
+
+    def disconnect_network(self, network_id: str, container: str):
+        command = ["docker", "network", "disconnect", network_id, container]
+        output = self.command_execute(command)
+        return {"status": "success"}

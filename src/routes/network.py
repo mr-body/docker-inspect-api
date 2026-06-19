@@ -25,3 +25,20 @@ def get_network(network_id: str):
         raise HTTPException(status_code=404, detail="Network not found")
 
     return result
+
+from pydantic import BaseModel
+
+class NetworkConnectRequest(BaseModel):
+    container: str
+
+@router.delete("/{network_id}")
+def remove_network(network_id: str):
+    return network_service.remove_network(network_id)
+
+@router.post("/{network_id}/connect")
+def connect_network(network_id: str, payload: NetworkConnectRequest):
+    return network_service.connect_network(network_id, payload.container)
+
+@router.post("/{network_id}/disconnect")
+def disconnect_network(network_id: str, payload: NetworkConnectRequest):
+    return network_service.disconnect_network(network_id, payload.container)

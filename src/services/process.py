@@ -31,3 +31,13 @@ class ProcessService(Command):
                 print("JSON inválido:", line, e)
                 continue
         return processes
+
+    def stop_process(self, process_id: str):
+        command = ["docker", "stop", process_id]
+        output = self.command_execute(command)
+        return {"status": "success"}
+
+    def restart_process(self, process_id: str):
+        command = ["docker", "restart", process_id]
+        output = self.command_execute(command)
+        return {"status": "success"}

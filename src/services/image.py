@@ -27,3 +27,31 @@ class ImageService(Command):
                 continue
 
         return images
+
+    def remove_image(self, image_id: str):
+        command = ["docker", "rmi", "-f", image_id]
+        output = self.command_execute(command)
+        return {"status": "success", "message": "Image removed"}
+
+    def run_image(self, payload: dict):
+        command = ["docker", "run", "-d"]
+        
+        if payload.get("name"):
+            command.extend(["--name", payload.get("name")])
+            
+        if payload.get("ports"):
+            ports = payload.get("ports").split(',')
+            for port in ports:
+                if port.strip():
+                    command.extend(["-p", port.strip()])
+                    
+        if payload.get("volumes"):
+            volumes = payload.get("volumes").split(',')
+            for vol in volumes:
+                if vol.strip():
+                    command.extend(["-v", vol.strip()])
+                    
+        command.append(payload.get("image"))
+        
+        output = self.command_execute(command)
+        return {"status": "success"}

@@ -18,3 +18,4 @@ uvicorn==0.47.0
 uvloop==0.22.1
 watchfiles==1.2.0
 websockets==16.0
+PyJWT==2.8.0
