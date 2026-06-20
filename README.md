@@ -14,17 +14,30 @@ O projeto permite inspecionar e listar informações do ambiente Docker de forma
 - API HTTP simples e fácil de consumir
 
 ## Como usar
-
-### Com Docker
-
 Você pode rodar a aplicação facilmente usando Docker:
 
+## Executar com Docker
+
 ```bash
-docker build -t docker-inspect-api .
-docker run -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock docker-inspect-api
+docker pull mrbody/docker-inspect-api:beta.0.1
+
+docker run -d \
+  --name docker-inspect-api \
+  -p 8000:8000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -e ADMIN_USER="waalexan" \
+  -e ADMIN_PASSWORD="Waltersan1933@" \
+  --restart unless-stopped \
+  mrbody/docker-inspect-api:latest
 ```
 
-### Localmente
+Docker Hub:
+https://hub.docker.com/repository/docker/mrbody/docker-inspect-api/general
+
+Código-fonte:
+https://github.com/mr-body/docker-inspect-api
+
+### Executar Localmente
 
 Certifique-se de que você possui o Docker instalado e o Python 3.8+.
 
