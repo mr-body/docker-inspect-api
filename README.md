@@ -25,8 +25,8 @@ docker run -d \
   --name docker-inspect-api \
   -p 8000:8000 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -e ADMIN_USER="waalexan" \
-  -e ADMIN_PASSWORD="Waltersan1933@" \
+  -e ADMIN_USER="admin" \
+  -e ADMIN_PASSWORD="admin" \
   --restart unless-stopped \
   mrbody/docker-inspect-api:latest
 ```
